@@ -5,21 +5,23 @@ import './App.css';
 import { useState } from 'react';
 import VentasList from './components/VentasList/VentasList';
 import Dashboard from './pages/Dashboard';
+import ContactoCliente from './pages/ContactoCliente';
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(true);
 
   return (
     <Router>
-      <div className={`app-container ${menuOpen ? 'menu-open' : 'menu-closed'}`}>
+      <div className="app-container">
         <NavBar setMenuOpen={setMenuOpen} menuOpen={menuOpen} />
         
-        <div className="content">
+        <div className={`content ${menuOpen ? 'menu-open' : 'menu-closed'}`}>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/ventas" element={<VentasList/>} />
+            <Route path="/ventas" element={<VentasList />} />
             <Route path="/dashboard" element={<Dashboard />} />
-      </Routes>
+            <Route path="/contactoCliente" element={<ContactoCliente />} />
+          </Routes>
         </div>
       </div>
     </Router>
