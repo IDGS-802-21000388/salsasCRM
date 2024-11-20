@@ -1,0 +1,55 @@
+.pagina404-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #fff;
+    background-size: cover;
+    position: relative;
+    text-align: center;
+    color: #980900;
+}
+
+.pagina404-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 1.5s ease-in-out;
+}
+
+.pagina404-logo {
+    width: 150px;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.pagina404-title {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    font-weight: bold;
+    color: #980900;
+}
+
+.pagina404-description {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: #980900;
+}
+
+.pagina404-subtext {
+    font-size: 1rem;
+    color: #980900;
+    opacity: 0.8;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

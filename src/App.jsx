@@ -4,6 +4,7 @@ import Index from './Components/Index/Index';
 import './App.css';
 import { useState } from 'react';
 import VentasList from './components/VentasList/VentasList';
+import Pagina404 from './components/Pagina404/pagina404';
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(true);
@@ -15,8 +16,10 @@ function App() {
         
         <div className="content">
           <Routes>
-            <Route path="/" element={<Index />} />
+            <Route path="/inicio" element={<Index />} />
             <Route path="/ventas" element={<VentasList/>} />
+
+            <Route path="*" element={<Pagina404/>} />
           </Routes>
         </div>
       </div>
