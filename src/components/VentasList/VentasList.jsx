@@ -114,13 +114,13 @@ export function VentasList() {
       console.error("No hay detalles de la venta o encuestas para enviar.");
       return;
     }
+
     if (!detalleVenta.producto || !detalleVenta.correoUsuario) {
       console.error("Los datos de detalleVenta no están completos.");
       return;
     }
 
-    // Asegurarse de que encuestas tiene datos antes de usarla
-    const ultimaEncuesta = encuestas[0];  // ya está ordenada por fecha en el useEffect
+    const ultimaEncuesta = encuestas[0];
 
     const emailBody = {
       email: detalleVenta.correoUsuario,
@@ -133,7 +133,6 @@ export function VentasList() {
           fotografia: detalleVenta.fotografia || "",
         },
       ],
-      // Asignar las respuestas de la última encuesta al cuerpo del correo
       entregaProducto: ultimaEncuesta ? ultimaEncuesta.entregaProducto : 5,
       facilidadUsoPagina: ultimaEncuesta ? ultimaEncuesta.facilidadUsoPagina : 5,
       presentacionProducto: ultimaEncuesta ? ultimaEncuesta.presentacionProducto : 5,
