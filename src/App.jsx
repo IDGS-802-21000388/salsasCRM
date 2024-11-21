@@ -4,6 +4,8 @@ import Index from './Components/Index/Index';
 import './App.css';
 import { useState } from 'react';
 import VentasList from './components/VentasList/VentasList';
+import ClientCatalog from './components/CatalogoClientes/ClientCatalog';
+import EmpresaList from './components/CatalogoEmpresas/EmpresaList';
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(true);
@@ -17,6 +19,8 @@ function App() {
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/ventas" element={<VentasList/>} />
+            <Route path="/clientes" element={<ClientCatalog/>} />
+            <Route path="/empresas" element={<EmpresaList/>} />
           </Routes>
         </div>
       </div>
