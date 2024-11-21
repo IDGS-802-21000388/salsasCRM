@@ -204,7 +204,7 @@ const Promociones = () => {
   };  
   
   return (
-    <div className="p-6 bg-[#f7f5f2] min-h-screen">
+    <div className="p-6 min-h-screen">
       <Typography variant="h2" className="text-center text-[#217765] font-bold mb-6">
         Gestión de Promociones
       </Typography>
