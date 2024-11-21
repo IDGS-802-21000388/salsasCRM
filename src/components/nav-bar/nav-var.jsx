@@ -15,7 +15,7 @@ const NavBar = () => {
       onMouseLeave={() => setMenuOpen(false)}
     >
       <div id="nav-header">
-        <Link id="nav-title" to="/">
+        <Link id="nav-title" to="/inicio">
           {menuOpen ? (
             "C R M"
           ) : (
@@ -25,7 +25,7 @@ const NavBar = () => {
         <hr />
       </div>
       <div id="nav-content">
-        <Link to="/" className="nav-button">
+        <Link to="/inicio" className="nav-button">
           <i className="fas fa-home"></i>
           <span>Inicio</span>
         </Link>

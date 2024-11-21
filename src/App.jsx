@@ -7,6 +7,7 @@ import VentasList from './components/VentasList/VentasList';
 import Login from './pages/Login';
 //import Home from './pages/Home';
 import Promociones from './pages/Promociones';
+import Pagina404 from './components/Pagina404/pagina404';
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(true);
@@ -20,8 +21,11 @@ function App() {
           <Routes>
             <Route path="/" element={<Login />} />
             <Route path="/ventas" element={<VentasList/>} />
-            <Route path="/home" element={<Index />} />
             <Route path="/promociones" element={<Promociones />} />
+            <Route path="/inicio" element={<Index />} />
+            <Route path="/ventas" element={<VentasList/>} />
+
+            <Route path="*" element={<Pagina404/>} />
           </Routes>
         </div>
       </div>
