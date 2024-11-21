@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import PropTypes from 'prop-types'; // Importa PropTypes
 import {
   Modal,
   Box,
@@ -248,6 +249,13 @@ const AddEmpresaModal = ({ open, onClose, onSubmit }) => {
       </Box>
     </Modal>
   );
+};
+
+// Agregar validación de PropTypes
+AddEmpresaModal.propTypes = {
+  open: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired,
 };
 
 export default AddEmpresaModal;
