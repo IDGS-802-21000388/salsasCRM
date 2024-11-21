@@ -15,7 +15,7 @@ const NavBar = () => {
       onMouseLeave={() => setMenuOpen(false)}
     >
       <div id="nav-header">
-        <Link id="nav-title" to="/">
+        <Link id="nav-title" to="/inicio">
           {menuOpen ? (
             "C R M"
           ) : (
@@ -25,7 +25,7 @@ const NavBar = () => {
         <hr />
       </div>
       <div id="nav-content">
-        <Link to="/" className="nav-button">
+        <Link to="/inicio" className="nav-button">
           <i className="fas fa-home"></i>
           <span>Inicio</span>
         </Link>
@@ -40,6 +40,10 @@ const NavBar = () => {
         <Link to="/empresas" className="nav-button">
         <i className="fas fa-building"></i>
         <span>Empresas</span>
+        </Link>
+        <Link to="/promociones" className="nav-button">
+          <i className="fas fa-tags"></i>
+          <span>Promociones</span>
         </Link>
         <div id="nav-content-highlight"></div>
       </div>

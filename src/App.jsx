@@ -6,6 +6,10 @@ import { useState } from 'react';
 import VentasList from './components/VentasList/VentasList';
 import ClientCatalog from './components/CatalogoClientes/ClientCatalog';
 import EmpresaList from './components/CatalogoEmpresas/EmpresaList';
+import Login from './pages/Login';
+//import Home from './pages/Home';
+import Promociones from './pages/Promociones';
+import Pagina404 from './components/Pagina404/pagina404';
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(true);
@@ -17,10 +21,15 @@ function App() {
         
         <div className="content">
           <Routes>
-            <Route path="/" element={<Index />} />
+            <Route path="/" element={<Login />} />
             <Route path="/ventas" element={<VentasList/>} />
             <Route path="/clientes" element={<ClientCatalog/>} />
             <Route path="/empresas" element={<EmpresaList/>} />
+            <Route path="/promociones" element={<Promociones />} />
+            <Route path="/inicio" element={<Index />} />
+            <Route path="/ventas" element={<VentasList/>} />
+
+            <Route path="*" element={<Pagina404/>} />
           </Routes>
         </div>
       </div>

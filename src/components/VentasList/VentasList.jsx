@@ -8,8 +8,8 @@ import { getEncuestasByUserId } from "../../services/EncuestaSatisfacionService"
 import { getPago } from "../../services/PagoService";
 import { getTarjeta } from "../../services/TarjetaService";
 import { saveAs } from "file-saver";
-import CreditCardIcon from '@mui/icons-material/CreditCard';
-import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+//import CreditCardIcon from '@mui/icons-material/CreditCard';
+import { EyeIcon, EyeSlashIcon, CreditCardIcon  } from "@heroicons/react/24/outline";
 
 const TABLE_HEAD = ["Nombre Cliente", "Correo", "Rol", "Tipo Pago", "Fecha Venta", "Total", "Acciones"];
 
@@ -28,6 +28,11 @@ export function VentasList() {
   const [openCardModal, setOpenCardModal] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
   const [showSensitiveData, setShowSensitiveData] = useState(false);
+  const [correoUsuarioV, setCorreoUsuarioV] = useState(null);
+  const [compraV, setCompraV] = useState(null);
+  const [ultimaEncuestaV, setUltimaEncuestaV] = useState(null);
+  const [nombreUsuarioV, setNombreUsuarioV] = useState(null);
+
 
   const handleOpen = () => setOpen(!open);
 
@@ -63,28 +68,27 @@ export function VentasList() {
   const showSaleDetails = async (idUsuario) => {
     try {
       const detalle = await getSaleDetailById(idUsuario);
-
       const producto = productos.find((prod) => prod.idProducto === detalle.idProducto);
       if (producto) {
         detalle.producto = producto.nombreProducto;
         detalle.precioUnitario = producto.precioVenta;
         detalle.fotografia = producto.fotografia;
       }
-
+  
       const venta = ventas.find((v) => v.idVenta === detalle.idVenta);
       if (venta) {
         detalle.total = venta.total;
       }
-
+  
       const usuario = usuarios.find((user) => user.idUsuario === idUsuario);
-      console.log(usuario);
       if (usuario) {
         detalle.correoUsuario = usuario.correo;
-        console.log("Correo API", detalle.correoUsuario);
+        setCorreoUsuarioV(usuario.correo);
+        setNombreUsuarioV(usuario.nombre);
       } else {
         console.error("Usuario no encontrado para ID:", idUsuario);
       }
-
+  
       let encuestasUsuario = [];
       try {
         encuestasUsuario = await getEncuestasByUserId(idUsuario);
@@ -95,61 +99,115 @@ export function VentasList() {
         console.error("Error al obtener las encuestas:", error);
         encuestasUsuario = [];
       }
-
+  
+      const compra = {
+        cantidad: detalle.cantidad,
+        total: detalle.total,
+        productos: [{ nombreProducto: producto.nombreProducto, precioUnitario: producto.precioVenta }],
+      };
+  
+      setCompraV(compra);
+  
       const ultimaEncuesta = encuestasUsuario.length > 0
         ? encuestasUsuario.sort((a, b) => new Date(b.fechaEncuesta) - new Date(a.fechaEncuesta))[0]
         : null;
-
+      setUltimaEncuestaV(ultimaEncuesta);
+  
       setEncuestas(ultimaEncuesta ? [ultimaEncuesta] : []);
       setDetalleVenta(detalle);
       setCanSendEmail(true);
+  
       handleOpen();
     } catch (error) {
       console.error("Error al cargar detalles de la venta:", error);
     }
   };
-
+  
   const sendEmail = async () => {
-    if (!detalleVenta || encuestas.length === 0) {
-      console.error("No hay detalles de la venta o encuestas para enviar.");
+
+    const email = correoUsuarioV;
+    const compra = compraV;
+    const encuesta = ultimaEncuestaV;
+    const usuario = nombreUsuarioV;
+
+    if (!email) {
+      console.error("No se proporcionó un correo electrónico.");
       return;
     }
-    if (!detalleVenta.producto || !detalleVenta.correoUsuario) {
-      console.error("Los datos de detalleVenta no están completos.");
+  
+    if (!compra || !compra.cantidad || !compra.total || !compra.productos) {
+      console.error("Información de la compra incompleta.");
       return;
     }
-
-    // Asegurarse de que encuestas tiene datos antes de usarla
-    const ultimaEncuesta = encuestas[0];  // ya está ordenada por fecha en el useEffect
-
+  
+    if (!encuesta) {
+      console.error("No se encontró ninguna encuesta asociada.");
+      return;
+    }
+  
+    const logoUrl = `https://drive.google.com/uc?export=view&id=1NjIiYJWBDYkn8DhVzyXuqciEETddfa8M`;
+  
+    const renderStars = (rating) => {
+      return "★".repeat(rating) + "☆".repeat(5 - rating);
+    };
+  
+    const htmlMessage = `
+      <html>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; background-color: #f7f7f7; margin: 0; padding: 0;">
+          <div style="max-width: 600px; margin: auto; background-color: #ffffff; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
+            <div style="text-align: center; margin-bottom: 20px;">
+              <img src="${logoUrl}" alt="Salsas Reni" style="width: 150px;" />
+            </div>
+            <h1 style="color: #c31a23; text-align: center;">¡Gracias por tu compra, ${usuario}!</h1>
+            <p style="text-align: center; color: #333;">Estos son los detalles de tu pedido:</p>
+            <div style="background-color: #f9f9f9; margin-top: 20px; padding: 15px; border-radius: 8px;">
+              <p style="font-weight: bold; color: #333;">Cantidad de productos:</p>
+              <p style="color: #555;">${compra.cantidad}</p>
+              <p style="font-weight: bold; color: #333;">Total:</p>
+              <p style="color: #555;">$${compra.total.toFixed(2)}</p>
+            </div>
+            <h3 style="color: #c31a23; text-align: center; margin-top: 20px;">Productos adquiridos</h3>
+            <div style="margin-top: 20px;">
+              ${compra.productos
+                .map(
+                  (p) => `
+                  <div style="display: flex; align-items: center; margin-bottom: 10px; border-bottom: 1px solid #ddd; padding-bottom: 10px;">
+                    <p style="font-weight: bold; color: #333;">${p.nombreProducto}</p>
+                  </div>`
+                )
+                .join("")}
+            </div>
+            <h3 style="color: #c31a23; text-align: center; margin-top: 20px;">Encuesta de Satisfacción</h3>
+            <div style="background-color: #f9f9f9; padding: 15px; border-radius: 8px;">
+              <p><strong>Proceso de Compra:</strong> ${encuesta.procesoCompra} ${renderStars(encuesta.procesoCompra)}</p>
+              <p><strong>Sabor del Producto:</strong> ${encuesta.saborProducto} ${renderStars(encuesta.saborProducto)}</p>
+              <p><strong>Entrega del Producto:</strong> ${encuesta.entregaProducto} ${renderStars(encuesta.entregaProducto)}</p>
+              <p><strong>Presentación del Producto:</strong> ${encuesta.presentacionProducto} ${renderStars(encuesta.presentacionProducto)}</p>
+              <p><strong>Facilidad de Uso de la Página:</strong> ${encuesta.facilidadUsoPagina} ${renderStars(encuesta.facilidadUsoPagina)}</p>
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+              <p style="color: #333;">Si tienes alguna duda o necesitas más información, no dudes en contactarnos.</p>
+              <p style="color: #555;">¡Gracias por elegir Salsas Reni!</p>
+            </div>
+          </div>
+        </body>
+      </html>
+    `;
+  
     const emailBody = {
-      email: detalleVenta.correoUsuario,
-      subject: "Ticket de Compra y Encuesta de Satisfacción",
-      cantidad: detalleVenta.cantidad,
-      total: detalleVenta.total,
-      productos: [
-        {
-          nombreProducto: detalleVenta.producto,
-          fotografia: detalleVenta.fotografia || "",
-        },
-      ],
-      // Asignar las respuestas de la última encuesta al cuerpo del correo
-      entregaProducto: ultimaEncuesta ? ultimaEncuesta.entregaProducto : 5,
-      facilidadUsoPagina: ultimaEncuesta ? ultimaEncuesta.facilidadUsoPagina : 5,
-      presentacionProducto: ultimaEncuesta ? ultimaEncuesta.presentacionProducto : 5,
-      procesoCompra: ultimaEncuesta ? ultimaEncuesta.procesoCompra : 5,
-      saborProducto: ultimaEncuesta ? ultimaEncuesta.saborProducto : 5,
+      emails: [email],
+      mensaje: htmlMessage,
     };
 
     try {
-      const response = await fetch("http://localhost:3000/enviar-correo", {
+      const response = await fetch("http://localhost:7215/api/PromoPorTipo/enviar-promocion", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(emailBody),
       });
-
+  
       if (response.ok) {
         console.log("Correo enviado exitosamente.");
       } else {
@@ -159,6 +217,7 @@ export function VentasList() {
       console.error("Error en la solicitud de envío de correo:", error);
     }
   };
+  
 
   const handleSearch = (query) => {
     setSearchQuery(query);
@@ -186,7 +245,6 @@ export function VentasList() {
       );
     });
 
-    console.log(filtered);
     setFilteredSales(filtered);
   };
 
