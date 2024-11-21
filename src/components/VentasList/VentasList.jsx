@@ -8,6 +8,7 @@ import { getEncuestasByUserId } from "../../services/EncuestaSatisfacionService"
 import { getPago } from "../../services/PagoService";
 import { getTarjeta } from "../../services/TarjetaService";
 import { saveAs } from "file-saver";
+//import CreditCardIcon from '@mui/icons-material/CreditCard';
 import { EyeIcon, EyeSlashIcon, CreditCardIcon  } from "@heroicons/react/24/outline";
 
 const TABLE_HEAD = ["Nombre Cliente", "Correo", "Rol", "Tipo Pago", "Fecha Venta", "Total", "Acciones"];

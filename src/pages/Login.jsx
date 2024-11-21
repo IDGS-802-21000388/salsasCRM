@@ -21,7 +21,7 @@ const Login = () => {
       const response = await login(correo, contrasenia);
       toast.success("Inicio de sesión exitosa.", {
         position: "bottom-center",
-        autoClose: 5000,
+        autoClose: 1500,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -33,6 +33,9 @@ const Login = () => {
       console.log("Login exitoso:", response);
       navigate("/inicio");
       localStorage.setItem("token", response.token);
+      setTimeout(() => {
+        navigate("/home");
+      }, 2200);
     } catch (error) {
       toast.error(
         "Error al iniciar sesión. Por favor, verifica tus credenciales.",
