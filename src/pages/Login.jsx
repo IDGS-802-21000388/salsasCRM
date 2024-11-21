@@ -3,11 +3,13 @@ import { FaUser, FaLock } from "react-icons/fa";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { login } from "../services/authService";
 import { Bounce, toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [correo, setCorreo] = useState("");
   const [contrasenia, setContrasenia] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -29,6 +31,7 @@ const Login = () => {
         transition: Bounce,
       });
       console.log("Login exitoso:", response);
+      navigate("/inicio");
       localStorage.setItem("token", response.token);
     } catch (error) {
       toast.error(
