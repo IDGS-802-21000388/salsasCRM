@@ -8,7 +8,7 @@ import { getEncuestasByUserId } from "../../services/EncuestaSatisfacionService"
 import { getPago } from "../../services/PagoService";
 import { getTarjeta } from "../../services/TarjetaService";
 import { saveAs } from "file-saver";
-import CreditCardIcon from '@mui/icons-material/CreditCard';
+//import CreditCardIcon from '@mui/icons-material/CreditCard';
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 
 const TABLE_HEAD = ["Nombre Cliente", "Correo", "Rol", "Tipo Pago", "Fecha Venta", "Total", "Acciones"];
@@ -381,11 +381,11 @@ export function VentasList() {
                               onClick={() => handleCardDetails(tarjeta)}
                               className="cursor-pointer"
                             >
-                              <CreditCardIcon className="w-5 h-5" />
+                              {/* <CreditCardIcon className="w-5 h-5" /> */}
                             </div>
                           ) : (
                             <div className="text-gray-400 cursor-not-allowed">
-                              <CreditCardIcon className="w-5 h-5" />
+                              {/* <CreditCardIcon className="w-5 h-5" /> */}
                             </div>
                           )}
                         </div>

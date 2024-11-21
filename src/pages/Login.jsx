@@ -3,11 +3,13 @@ import { FaUser, FaLock } from "react-icons/fa";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { login } from "../services/authService";
 import { Bounce, toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [correo, setCorreo] = useState("");
   const [contrasenia, setContrasenia] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -19,7 +21,7 @@ const Login = () => {
       const response = await login(correo, contrasenia);
       toast.success("Inicio de sesión exitosa.", {
         position: "bottom-center",
-        autoClose: 5000,
+        autoClose: 1500,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -30,6 +32,9 @@ const Login = () => {
       });
       console.log("Login exitoso:", response);
       localStorage.setItem("token", response.token);
+      setTimeout(() => {
+        navigate("/home");
+      }, 2200);
     } catch (error) {
       toast.error(
         "Error al iniciar sesión. Por favor, verifica tus credenciales.",
