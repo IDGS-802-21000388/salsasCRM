@@ -31,10 +31,9 @@ const Login = () => {
         transition: Bounce,
       });
       console.log("Login exitoso:", response);
-      navigate("/inicio");
       localStorage.setItem("token", response.token);
       setTimeout(() => {
-        navigate("/home");
+        navigate("/inicio");
       }, 2200);
     } catch (error) {
       toast.error(
