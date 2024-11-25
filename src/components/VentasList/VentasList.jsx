@@ -8,6 +8,7 @@ import { getEncuestasByUserId } from "../../services/EncuestaSatisfacionService"
 import { getPago } from "../../services/PagoService";
 import { getTarjeta } from "../../services/TarjetaService";
 import { saveAs } from "file-saver";
+import { Bounce, toast } from "react-toastify";
 //import CreditCardIcon from '@mui/icons-material/CreditCard';
 import { EyeIcon, EyeSlashIcon, CreditCardIcon  } from "@heroicons/react/24/outline";
 
@@ -200,7 +201,7 @@ export function VentasList() {
     };
 
     try {
-      const response = await fetch("http://localhost:7215/api/PromoPorTipo/enviar-promocion", {
+      const response = await fetch("http://localhost:7215/api/PromoPorTipo/enviar-ticket", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -210,8 +211,33 @@ export function VentasList() {
   
       if (response.ok) {
         console.log("Correo enviado exitosamente.");
+        toast.success("Envio de ticket exitosa.", {
+          position: "bottom-center",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
       } else {
         console.error("Error al enviar el correo:", await response.json());
+        toast.error(
+          "Error al enviar el ticket. Por favor, verifica los datos.",
+          {
+            position: "bottom-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            transition: Bounce,
+          }
+        );
       }
     } catch (error) {
       console.error("Error en la solicitud de envío de correo:", error);
@@ -286,6 +312,17 @@ export function VentasList() {
 
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     saveAs(blob, "ventas_completas.csv");
+    toast.success("Descarga exitosa.", {
+      position: "bottom-center",
+      autoClose: 1500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      transition: Bounce,
+    });
   };
 
 
