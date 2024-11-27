@@ -1,225 +1,225 @@
-import { useEffect, useState } from 'react';
-import { getEmpresas, createEmpresa, getEmpresa } from '../../services/EmpresaService';
-import { getUsers } from '../../services/UsuarioService';
-import AddEmpresaModal from './AddEmpresaModal'; // Asegúrate de ajustar la ruta
+import { useEffect, useState } from "react";
+import {
+  Card,
+  CardHeader,
+  Typography,
+  CardBody,
+  CardFooter,
+  Button,
+  Input,
+} from "@material-tailwind/react";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { getEmpresasConUsuarios } from "../../services/EmpresaService";
+import { AddEmpresaModal } from "./AddEmpresaModal";
+import { AddEmpresaUsuarioModal } from "./AddEmpresaUsuarioModal"; // Importar el nuevo modal
+
+const TABLE_HEAD = ["Nombre", "Teléfono", "Dirección", "Usuarios"];
 
 const EmpresaList = () => {
   const [empresas, setEmpresas] = useState([]);
-  const [usuarios, setUsuarios] = useState([]);
-  const [selectedUsuarios, setSelectedUsuarios] = useState({});
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [alert, setAlert] = useState({ open: false, message: '', severity: '' });
-  const [loading, setLoading] = useState(true);  // Estado de carga
+  const [searchTerm, setSearchTerm] = useState("");
+  const [openAddEmpresaModal, setOpenAddEmpresaModal] = useState(false);
+  const [openAddEmpresaUsuarioModal, setOpenAddEmpresaUsuarioModal] = useState(false); // Estado para el nuevo modal
+  
+  // Paginación
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(3); // Empresas por página
 
-  // Obtener las empresas y usuarios cuando el componente se monta
   useEffect(() => {
-    const fetchEmpresasYUsuarios = async () => {
+    const fetchEmpresas = async () => {
       try {
-        const empresasData = await getEmpresas();
-        const usuariosData = await getUsers();
-
-        // Agrupar empresas por nombre y agregar todos los usuarios asociados a ellas
-        const groupedEmpresas = empresasData.reduce((acc, empresa) => {
-          const empresaExistente = acc.find(item => item.nombre === empresa.nombre);
-          if (empresaExistente) {
-            empresaExistente.usuarios.push(empresa.usuario); // Agregar el usuario asociado
-          } else {
-            acc.push({ ...empresa, usuarios: [empresa.usuario] });
-          }
-          return acc;
-        }, []);
-
-        setEmpresas(groupedEmpresas);
-        setUsuarios(usuariosData);
-        setLoading(false);  // Termina la carga
+        const data = await getEmpresasConUsuarios();
+        setEmpresas(data);
       } catch (error) {
-        console.error('Error al cargar empresas o usuarios', error);
-        setLoading(false);  // Termina la carga en caso de error
+        console.error("Error al cargar las empresas:", error);
       }
     };
-
-    fetchEmpresasYUsuarios();
+    fetchEmpresas();
   }, []);
 
-  // Función para manejar el cambio de usuario seleccionado para cada empresa
-  const handleUsuarioChange = (empresaId, event) => {
-    setSelectedUsuarios((prev) => ({
-      ...prev,
-      [empresaId]: event.target.value,
-    }));
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value.toLowerCase());
   };
 
-  const handleAddEmpresa = async (newEmpresa) => {
+  const handleOpenAddEmpresaModal = () => {
+    setOpenAddEmpresaModal(true);
+  };
+
+  const handleCloseAddEmpresaModal = () => {
+    setOpenAddEmpresaModal(false);
+  };
+
+  const handleOpenAddEmpresaUsuarioModal = () => {
+    setOpenAddEmpresaUsuarioModal(true); // Abrir el nuevo modal
+  };
+
+  const handleCloseAddEmpresaUsuarioModal = () => {
+    setOpenAddEmpresaUsuarioModal(false); // Cerrar el nuevo modal
+  };
+
+  const filteredEmpresas = empresas.filter((empresa) =>
+    empresa.nombre.toLowerCase().includes(searchTerm)
+  );
+
+  // Lógica para el paginado
+  const indexOfLastEmpresa = currentPage * itemsPerPage;
+  const indexOfFirstEmpresa = indexOfLastEmpresa - itemsPerPage;
+  const currentEmpresas = filteredEmpresas.slice(indexOfFirstEmpresa, indexOfLastEmpresa);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  const handleReloadEmpresas = async () => {
     try {
-      if (!newEmpresa.idUsuario) {
-        setAlert({ open: true, message: 'Debe seleccionar un usuario para la empresa', severity: 'error' });
-        return;
-      }
-  
-      // Verificar si el usuario ya está asociado a la empresa
-      const usuarioExistente = newEmpresa.usuarios.some(usuario => usuario.idUsuario === newEmpresa.idUsuario);
-      if (usuarioExistente) {
-        setAlert({ open: true, message: 'El usuario ya está asociado a esta empresa', severity: 'error' });
-        return;
-      }
-  
-      // Si pasa la validación, agregar el usuario a la empresa
-      newEmpresa.usuarios.push(usuarios.find(user => user.idUsuario === newEmpresa.idUsuario));
-  
-      // Crear la empresa
-      const response = await createEmpresa(newEmpresa);
-  
-      // Obtener la empresa con los datos completos
-      const empresaConUsuario = await getEmpresa(response.idEmpresa);
-  
-      // Verificar si la empresa ya existe
-      setEmpresas((prev) => {
-        const empresaExistente = prev.find(empresa => empresa.idEmpresa === empresaConUsuario.idEmpresa);
-        if (!empresaExistente) {
-          return [...prev, empresaConUsuario];
-        }
-        return prev; 
-      });
-  
-      // Mostrar alerta de éxito
-      setAlert({ open: true, message: 'Empresa guardada correctamente', severity: 'success' });
+      const data = await getEmpresasConUsuarios();
+      setEmpresas(data);
     } catch (error) {
-      console.error('Error al guardar la empresa:', error);
-      setAlert({ open: true, message: 'Error al guardar la empresa', severity: 'error' });
+      console.error("Error al recargar las empresas:", error);
     }
   };
-  
 
   return (
-    <div style={{ padding: '10px' }}>
-      <h2 style={{ textAlign: 'center', fontWeight: 'bold' }}>Catálogo de Empresas</h2>
-
-      {/* Botón para abrir el modal */}
-      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
-        <button onClick={() => setIsModalOpen(true)} style={buttonStyle}>
-          Agregar Empresa
-        </button>
-      </div>
-
-      {/* Modal para agregar empresa */}
-      <AddEmpresaModal
-        open={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSubmit={handleAddEmpresa}
-      />
-
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        {loading ? (
-          <p style={{ fontSize: '16px', color: '#757575' }}>Cargando...</p>
-        ) : empresas.length > 0 ? (
-          empresas.map((empresa) => (
-            <div key={empresa.idEmpresa} style={cardStyle}>
-              <div style={{ padding: '10px' }}>
-                <h3 style={headingStyle}>{empresa.nombre}</h3>
-                <p><strong>Teléfono de la Empresa:</strong> {empresa.telefono}</p>
-
-                {/* Dirección de la empresa */}
-                <h4>Dirección</h4>
-                <p>
-                  {empresa.direccion?.calle}, {empresa.direccion?.colonia}, {empresa.direccion?.municipio}, {empresa.direccion?.estado}, {empresa.direccion?.codigoPostal}
-                </p>
-
-                {/* Información de los usuarios asociados */}
-                <h4>Usuarios Asociados</h4>
-                {empresa.usuarios?.map((usuario) => (
-                  <div key={usuario.idUsuario}>
-                    <p><strong>Nombre:</strong> {usuario.nombre}</p>
-                    <p><strong>Correo:</strong> {usuario.correo}</p>
-                    <p><strong>Teléfono:</strong> {usuario.telefono}</p>
-                  </div>
-                ))}
-
-                {/* Selección de un nuevo usuario para asociar */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}>
-                  <select
-                    value={selectedUsuarios[empresa.idEmpresa] || ''}
-                    onChange={(event) => handleUsuarioChange(empresa.idEmpresa, event)}
-                    style={selectStyle}
-                  >
-                    <option value="">Seleccionar Usuario</option>
-                    {usuarios.filter(usuario => ['cliente', 'hotel', 'restaurante'].includes(usuario.rol) && !empresa.usuarios.some(u => u.idUsuario === usuario.idUsuario)).map((usuario) => (
-                      <option key={usuario.idUsuario} value={usuario.idUsuario}>
-                        {usuario.nombre}
-                      </option>
-                    ))}
-                  </select>
-                  <button
-                    onClick={() => handleAddEmpresa({ ...empresa, idUsuario: selectedUsuarios[empresa.idEmpresa] })}
-                    style={{ ...buttonStyle, padding: '6px 12px', fontSize: '14px', marginTop: '10px' }}
-                  >
-                    Agregar Usuario
-                  </button>
-                </div>
+    <>
+      <Card className="h-full w-full">
+        <CardHeader floated={false} shadow={false} className="rounded-none">
+          <div className="mb-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">
+            <div>
+              <Typography variant="h5" color="blue-gray">
+                Catálogo de Empresas
+              </Typography>
+              <Typography color="gray" className="mt-1 font-normal">
+                Información de las empresas registradas y sus usuarios
+              </Typography>
+            </div>
+            <div className="flex w-full shrink-0 gap-2 md:w-max">
+              <div className="w-full md:w-72">
+                <Input
+                  label="Buscar por nombre"
+                  icon={<MagnifyingGlassIcon className="h-5 w-5" />}
+                  onChange={handleSearch}
+                />
               </div>
             </div>
-          ))
-        ) : (
-          <p style={{ fontSize: '16px', color: '#757575' }}>
-            No hay empresas disponibles.
-          </p>
-        )}
+          </div>
+        </CardHeader>
+        <CardBody className="overflow-scroll px-0">
+          <table className="w-full min-w-max table-auto text-left">
+            <thead>
+              <tr>
+                {TABLE_HEAD.map((head) => (
+                  <th
+                    key={head}
+                    className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
+                  >
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal leading-none opacity-70"
+                    >
+                      {head}
+                    </Typography>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {currentEmpresas.map((empresa, index) => (
+                <tr key={index} className="hover:bg-blue-gray-50">
+                  <td className="p-4 border-b border-blue-gray-50">
+                    <Typography variant="small" color="blue-gray">
+                      {empresa.nombre}
+                    </Typography>
+                  </td>
+                  <td className="p-4 border-b border-blue-gray-50">
+                    <Typography variant="small" color="blue-gray">
+                      {empresa.telefono || "N/A"}
+                    </Typography>
+                  </td>
+                  <td className="p-4 border-b border-blue-gray-50">
+                    <Typography variant="small" color="blue-gray">
+                      {empresa.direccion ? (
+                        `${empresa.direccion.estado}, ${empresa.direccion.municipio}, ${empresa.direccion.calle}, ${empresa.direccion.colonia}, ${empresa.direccion.numExt} , ${empresa.direccion.codigoPostal}`
+                      ) : "Sin dirección"}
+                    </Typography>
+                  </td>
+                  <td className="p-4 border-b border-blue-gray-50">
+                    {empresa.usuarios.length > 0 ? (
+                      <ul className="list-disc pl-4">
+                        {empresa.usuarios.map((usuario) => (
+                          <li key={usuario.idUsuario}>
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className="font-normal"
+                            >
+                              {usuario.nombre} - {usuario.correo} -{" "}
+                              {usuario.telefono}
+                            </Typography>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <Typography variant="small" color="gray">
+                        Sin usuarios asignados
+                      </Typography>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </CardBody>
+        <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
+          <Typography variant="small" color="blue-gray" className="font-normal">
+            Mostrando {currentEmpresas.length} de {filteredEmpresas.length} empresas
+          </Typography>
+          <div className="flex gap-2">
+            <Button variant="outlined" size="sm" onClick={handleOpenAddEmpresaModal}>
+              Añadir nueva empresa
+            </Button>
+            <Button
+              variant="outlined"
+              size="sm"
+              color="blue"
+              onClick={handleOpenAddEmpresaUsuarioModal}
+            >
+              Añadir empresa-usuario
+            </Button>
+          </div>
+        </CardFooter>
+      </Card>
+
+      {/* Paginación */}
+      <div className="flex justify-center mt-4">
+        <Button
+          variant="outlined"
+          size="sm"
+          disabled={currentPage === 1}
+          onClick={() => paginate(currentPage - 1)}
+        >
+          Anterior
+        </Button>
+        <Button
+          variant="outlined"
+          size="sm"
+          disabled={currentPage === Math.ceil(filteredEmpresas.length / itemsPerPage)}
+          onClick={() => paginate(currentPage + 1)}
+        >
+          Siguiente
+        </Button>
       </div>
 
-      {/* Snackbar para mostrar alertas */}
-      {alert.open && (
-        <div style={alertStyle[alert.severity]}>
-          <p>{alert.message}</p>
-        </div>
-      )}
-    </div>
+      <AddEmpresaModal
+        open={openAddEmpresaModal}
+        onClose={handleCloseAddEmpresaModal}
+        onSuccess={handleReloadEmpresas} // Callback para recargar datos
+      />
+      <AddEmpresaUsuarioModal
+        open={openAddEmpresaUsuarioModal}
+        onClose={handleCloseAddEmpresaUsuarioModal}
+        onSuccess={handleReloadEmpresas} // Callback para recargar datos
+      />
+    </>
   );
-};
-
-const buttonStyle = {
-  backgroundColor: '#3f51b5',
-  color: 'white',
-  padding: '10px 20px',
-  borderRadius: '5px',
-  border: 'none',
-  cursor: 'pointer',
-};
-
-const cardStyle = {
-  marginBottom: '10px',
-  width: '100%',
-  maxWidth: '900px',
-  padding: '15px',
-  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-  borderRadius: '6px',
-};
-
-const headingStyle = {
-  fontSize: '16px',
-  fontWeight: 'bold',
-  marginBottom: '5px',
-};
-
-const selectStyle = {
-  maxWidth: '200px',
-  padding: '5px',
-  fontSize: '14px',
-};
-
-const alertStyle = {
-  success: {
-    backgroundColor: '#4caf50',
-    color: 'white',
-    padding: '10px',
-    marginTop: '10px',
-    borderRadius: '5px',
-  },
-  error: {
-    backgroundColor: '#f44336',
-    color: 'white',
-    padding: '10px',
-    marginTop: '10px',
-    borderRadius: '5px',
-  },
 };
 
 export default EmpresaList;

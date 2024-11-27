@@ -1,58 +1,60 @@
 import axios from 'axios';
 
-// Configura la URL base de tu API
-const API_URL = 'http://localhost:7215/api/empresa';  // Ajusta la URL según tu configuración
+const API_URL = 'http://localhost:7215/api'; // Cambia el puerto y URL según tu servidor
 
-// Obtén todas las empresas
+// Empresas
 export const getEmpresas = async () => {
+    const response = await axios.get(`${API_URL}/empresa`);
+    return response.data;
+};
+
+export const getEmpresaById = async (id) => {
+    const response = await axios.get(`${API_URL}/empresa/${id}`);
+    return response.data;
+};
+
+export const getEmpresasConUsuarios = async () => {
   try {
-    const response = await axios.get(API_URL);
+    const response = await axios.get(`${API_URL}/empresa/api/empresa-con-usuarios`);
     return response.data;
   } catch (error) {
-    console.error('Error al obtener las empresas:', error);
+    console.error("Error al obtener empresas con usuarios:", error);
     throw error;
   }
 };
 
-// Obtén una empresa por su id
-export const getEmpresa = async (id) => {
-  try {
-    const response = await axios.get(`${API_URL}/${id}`);
-    return response.data;
-  } catch (error) {
-    console.error('Error al obtener la empresa:', error);
-    throw error;
-  }
-};
-
-// Crea una nueva empresa
 export const createEmpresa = async (empresa) => {
-  try {
-    const response = await axios.post(API_URL, empresa);
+    const response = await axios.post(`${API_URL}/empresa`, empresa);
     return response.data;
-  } catch (error) {
-    console.error('Error al crear la empresa:', error);
-    throw error;
-  }
 };
 
-// Actualiza una empresa existente
 export const updateEmpresa = async (id, empresa) => {
-  try {
-    const response = await axios.put(`${API_URL}/${id}`, empresa);
+    const response = await axios.put(`${API_URL}/empresa/${id}`, empresa);
     return response.data;
+};
+
+export const deleteEmpresa = async (id) => {
+    const response = await axios.delete(`${API_URL}/empresa/${id}`);
+    return response.status;
+};
+
+// Relaciones Empresa-Usuario
+export const createEmpresaUsuario = async (relation) => {
+    const response = await axios.post(`${API_URL}/empresaUsuario`, relation);
+    return response.data;
+};
+
+export const getAllEmpresaUsuarios = async () => {
+  try {
+      const response = await axios.get(`${API_URL}/empresaUsuario`);
+      return response.data;
   } catch (error) {
-    console.error('Error al actualizar la empresa:', error);
-    throw error;
+      console.error("Error al obtener los registros de EmpresaUsuario:", error);
+      throw error;
   }
 };
 
-// Elimina una empresa
-export const deleteEmpresa = async (id) => {
-  try {
-    await axios.delete(`${API_URL}/${id}`);
-  } catch (error) {
-    console.error('Error al eliminar la empresa:', error);
-    throw error;
-  }
+export const getEmpresaUsuarioById = async (id) => {
+  const response = await axios.get(`${API_URL}/empresaUsuario/${id}`);
+  return response.data;
 };

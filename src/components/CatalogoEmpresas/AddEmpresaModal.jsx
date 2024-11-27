@@ -1,261 +1,212 @@
-import { useState, useEffect } from 'react';
-import PropTypes from 'prop-types'; // Importa PropTypes
+import { toast } from "react-toastify";
+import PropTypes from "prop-types";
 import {
-  Modal,
-  Box,
-  Typography,
-  TextField,
+  Input,
   Button,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-} from '@mui/material';
-import { getUsers } from '../../services/UsuarioService';
+  Dialog,
+  Typography,
+  DialogBody,
+  DialogHeader,
+  DialogFooter,
+  Textarea,
+} from "@material-tailwind/react";
+import { useState } from "react";
+import { createEmpresa } from "../../services/EmpresaService";
 
-const AddEmpresaModal = ({ open, onClose, onSubmit }) => {
+export const AddEmpresaModal = ({ open, onClose, onSuccess}) => {
   const [empresa, setEmpresa] = useState({
-    nombre: '',
-    telefono: '',
+    nombre: "",
+    telefono: "",
     direccion: {
-      estado: '',
-      municipio: '',
-      codigoPostal: '',
-      colonia: '',
-      calle: '',
-      numExt: '',
-      numInt: '',
-      referencia: '',
+      estado: "",
+      municipio: "",
+      codigoPostal: "",
+      colonia: "",
+      calle: "",
+      numExt: "",
+      numInt: "",
+      referencia: "",
     },
-    idUsuario: '',
   });
-
-  const [usuarios, setUsuarios] = useState([]);
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const allUsers = await getUsers();
-        const filteredUsers = allUsers.filter((user) =>
-          ['cliente', 'hotel', 'restaurante'].includes(user.rol)
-        );
-        setUsuarios(filteredUsers);
-      } catch (error) {
-        console.error('Error fetching users', error);
-      }
-    };
-
-    if (open) {
-      fetchUsers();
-    }
-  }, [open]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    if (name === 'telefono') {
-      // Asegúrate de que solo se ingresen números y tenga un máximo de 10 dígitos
-      const phoneValue = value.replace(/\D/g, '').slice(0, 10);  // Solo números y límite de 10 caracteres
-      setEmpresa((prev) => ({ ...prev, telefono: phoneValue }));
-    } else if (name in empresa.direccion) {
+    if (name === "telefono") {
+      // Limitar a 10 dígitos numéricos
+      if (/^\d*$/.test(value) && value.length <= 10) {
+        setEmpresa((prev) => ({ ...prev, [name]: value }));
+      }
+    } else if (name === "direccion.codigoPostal") {
+      // Limitar a 5 dígitos numéricos
+      if (/^\d*$/.test(value) && value.length <= 5) {
+        setEmpresa((prev) => ({
+          ...prev,
+          direccion: { ...prev.direccion, codigoPostal: value },
+        }));
+      }
+    } else if (name.startsWith("direccion.")) {
+      const field = name.split(".")[1];
       setEmpresa((prev) => ({
         ...prev,
-        direccion: { ...prev.direccion, [name]: value },
+        direccion: { ...prev.direccion, [field]: value },
       }));
     } else {
       setEmpresa((prev) => ({ ...prev, [name]: value }));
     }
   };
 
-  const handleUserSelect = (e) => {
-    const selectedUserId = e.target.value;
-    const selectedUser = usuarios.find((user) => user.idUsuario === selectedUserId);
+  const validateFields = () => {
+    const { nombre, telefono, direccion } = empresa;
+    const requiredFields = [
+      { name: "Nombre", value: nombre },
+      { name: "Teléfono", value: telefono },
+      { name: "Estado", value: direccion.estado },
+      { name: "Municipio", value: direccion.municipio },
+      { name: "Código Postal", value: direccion.codigoPostal },
+      { name: "Colonia", value: direccion.colonia },
+      { name: "Calle", value: direccion.calle },
+      { name: "Número Exterior", value: direccion.numExt },
+    ];
 
-    if (selectedUser) {
-      setEmpresa((prev) => ({
-        ...prev,
-        idUsuario: selectedUser.idUsuario,
-      }));
+    for (let field of requiredFields) {
+      if (!field.value.trim()) {
+        toast.error(`El campo ${field.name} es obligatorio.`);
+        return false;
+      }
+    }
+
+    if (telefono.length !== 10) {
+      toast.error("El teléfono debe tener exactamente 10 dígitos.");
+      return false;
+    }
+
+    if (direccion.codigoPostal.length !== 5) {
+      toast.error("El código postal debe tener exactamente 5 dígitos.");
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleCreate = async () => {
+    if (!validateFields()) return;
+
+    try {
+      await createEmpresa(empresa);
+      toast.success("Empresa creada exitosamente.");
+      onClose();
+      setEmpresa({
+        nombre: "",
+        telefono: "",
+        direccion: {
+          estado: "",
+          municipio: "",
+          codigoPostal: "",
+          colonia: "",
+          calle: "",
+          numExt: "",
+          numInt: "",
+          referencia: "",
+        },
+      });
+      if (onSuccess) {
+        onSuccess(); // Llamar al callback para recargar datos
+      }
+    } catch (error) {
+      console.error("Error al crear la empresa:", error);
+      toast.error("Ocurrió un error al crear la empresa.");
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Empresa enviada:', empresa); // Ver lo que se está enviando
-    onSubmit(empresa); // Pasamos la empresa con todos los datos
-    setEmpresa({
-      nombre: '',
-      telefono: '',
-      direccion: {
-        estado: '',
-        municipio: '',
-        codigoPostal: '',
-        colonia: '',
-        calle: '',
-        numExt: '',
-        numInt: '',
-        referencia: '',
-      },
-      idUsuario: '',
-    });
-    onClose();
-  };
-
   return (
-    <Modal open={open} onClose={onClose}>
-      <Box
-        sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 500,
-          maxHeight: '80vh', // Altura máxima relativa a la ventana
-          bgcolor: 'background.paper',
-          boxShadow: 24,
-          p: 4,
-          borderRadius: '8px',
-          overflowY: 'auto', // Habilitar el desplazamiento vertical
-        }}
-      >
-        <Typography variant="h6" component="h2" gutterBottom>
-          Agregar Empresa
+    <Dialog open={open} handler={onClose} size="lg" className="space-y-4 pb-6 overflow-y-auto max-h-[70vh]">
+      <DialogHeader>
+        <Typography variant="h4" color="blue-gray">
+          Añadir Empresa
         </Typography>
-
-        <form onSubmit={handleSubmit}>
-          <TextField
-            fullWidth
-            label="Nombre de la Empresa"
-            variant="outlined"
-            name="nombre"
-            value={empresa.nombre}
-            onChange={handleChange}
-            margin="normal"
-            required
-          />
-          <TextField
-            fullWidth
-            label="Teléfono"
-            variant="outlined"
-            name="telefono"
-            value={empresa.telefono}
-            onChange={handleChange}
-            margin="normal"
-            required
-          />
-          {/* Aquí puedes agregar campos adicionales según sea necesario */}
-          
-          <FormControl fullWidth margin="normal" required>
-            <InputLabel>Usuario Asociado</InputLabel>
-            <Select
-              label="Usuario Asociado"
-              name="idUsuario"
-              value={empresa.idUsuario}
-              onChange={handleUserSelect}
-            >
-              {usuarios.map((user) => (
-                <MenuItem key={user.idUsuario} value={user.idUsuario}>
-                  {user.nombre}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          
-          <Typography variant="h6" gutterBottom>Dirección</Typography>
-          <TextField
-            fullWidth
-            label="Estado"
-            variant="outlined"
-            name="estado"
-            value={empresa.direccion.estado}
-            onChange={handleChange}
-            margin="normal"
-            required
-          />
-          <TextField
-            fullWidth
-            label="Municipio"
-            variant="outlined"
-            name="municipio"
-            value={empresa.direccion.municipio}
-            onChange={handleChange}
-            margin="normal"
-            required
-          />
-          <TextField
-            fullWidth
-            label="Código Postal"
-            variant="outlined"
-            name="codigoPostal"
-            value={empresa.direccion.codigoPostal}
-            onChange={handleChange}
-            margin="normal"
-            required
-          />
-          <TextField
-            fullWidth
-            label="Colonia"
-            variant="outlined"
-            name="colonia"
-            value={empresa.direccion.colonia}
-            onChange={handleChange}
-            margin="normal"
-            required
-          />
-          <TextField
-            fullWidth
-            label="Calle"
-            variant="outlined"
-            name="calle"
-            value={empresa.direccion.calle}
-            onChange={handleChange}
-            margin="normal"
-            required
-          />
-          <TextField
-            fullWidth
+      </DialogHeader>
+      <DialogBody className="space-y-4 pb-6">
+        <Input
+          label="Nombre de la Empresa"
+          name="nombre"
+          value={empresa.nombre}
+          onChange={handleChange}
+        />
+        <Input
+          label="Teléfono"
+          name="telefono"
+          value={empresa.telefono}
+          type="number"
+          onChange={handleChange}
+        />
+        <Input
+          label="Estado"
+          name="direccion.estado"
+          value={empresa.direccion.estado}
+          onChange={handleChange}
+        />
+        <Input
+          label="Municipio"
+          name="direccion.municipio"
+          value={empresa.direccion.municipio}
+          onChange={handleChange}
+        />
+        <Input
+          label="Código Postal"
+          name="direccion.codigoPostal"
+          value={empresa.direccion.codigoPostal}
+          type="number"
+          onChange={handleChange}
+        />
+        <Input
+          label="Colonia"
+          name="direccion.colonia"
+          value={empresa.direccion.colonia}
+          onChange={handleChange}
+        />
+        <Input
+          label="Calle"
+          name="direccion.calle"
+          value={empresa.direccion.calle}
+          onChange={handleChange}
+        />
+        <div className="flex gap-4">
+          <Input
             label="Número Exterior"
-            variant="outlined"
-            name="numExt"
+            name="direccion.numExt"
             value={empresa.direccion.numExt}
             onChange={handleChange}
-            margin="normal"
-            required
           />
-          <TextField
-            fullWidth
-            label="Número Interior (opcional)"
-            variant="outlined"
-            name="numInt"
+          <Input
+            label="Número Interior (Opcional)"
+            name="direccion.numInt"
             value={empresa.direccion.numInt}
             onChange={handleChange}
-            margin="normal"
           />
-          <TextField
-            fullWidth
-            label="Referencia (opcional)"
-            variant="outlined"
-            name="referencia"
-            value={empresa.direccion.referencia}
-            onChange={handleChange}
-            margin="normal"
-          />
-
-          <Box display="flex" justifyContent="space-between" marginTop="20px">
-            <Button variant="contained" color="secondary" onClick={onClose}>Cancelar</Button>
-            <Button variant="contained" color="primary" type="submit">Guardar Empresa</Button>
-          </Box>
-        </form>
-      </Box>
-    </Modal>
+        </div>
+        <Textarea
+          label="Referencia (Opcional)"
+          name="direccion.referencia"
+          value={empresa.direccion.referencia}
+          onChange={handleChange}
+        />
+      </DialogBody>
+      <DialogFooter>
+        <Button variant="text" color="red" onClick={onClose}>
+          Cancelar
+        </Button>
+        <Button variant="filled" color="blue" onClick={handleCreate}>
+          Crear Empresa
+        </Button>
+      </DialogFooter>
+    </Dialog>
   );
 };
 
-// Agregar validación de PropTypes
 AddEmpresaModal.propTypes = {
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  onSubmit: PropTypes.func.isRequired,
-};
+  onSuccess : PropTypes.func.isRequired,
 
-export default AddEmpresaModal;
+};
