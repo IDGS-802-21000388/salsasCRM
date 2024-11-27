@@ -1,5 +1,5 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import NavBar from './Components/nav-bar/nav-var';
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
+import NavBar from './components/nav-bar/nav-var';
 import Index from './Components/Index/Index';
 import './App.css';
 import { useState } from 'react';
@@ -10,29 +10,42 @@ import Login from './pages/Login';
 //import Home from './pages/Home';
 import Promociones from './pages/Promociones';
 import Pagina404 from './components/Pagina404/pagina404';
+import Dashboard from './pages/Dashboard';
+import ContactoCliente from './pages/ContactoCliente';
 
-function App() {
+function AppContent() {
   const [menuOpen, setMenuOpen] = useState(true);
+  const location = useLocation();
+
+  const isLoginRoute = location.pathname === '/';
 
   return (
-    <Router>
-      <div className={`app-container ${menuOpen ? 'menu-open' : 'menu-closed'}`}>
-        <NavBar setMenuOpen={setMenuOpen} menuOpen={menuOpen} />
-        
-        <div className="content">
-          <Routes>
-            <Route path="/" element={<Login />} />
-            <Route path="/ventas" element={<VentasList/>} />
-            <Route path="/clientes" element={<ClientCatalog/>} />
-            <Route path="/empresas" element={<EmpresaList/>} />
-            <Route path="/promociones" element={<Promociones />} />
-            <Route path="/inicio" element={<Index />} />
-            <Route path="/ventas" element={<VentasList/>} />
-
-            <Route path="*" element={<Pagina404/>} />
-          </Routes>
-        </div>
+    <div className={`app-container ${isLoginRoute ? '' : menuOpen ? 'menu-open' : 'menu-closed'}`}>
+      {!isLoginRoute && <NavBar setMenuOpen={setMenuOpen} menuOpen={menuOpen} />}
+      
+      <div className={`content ${isLoginRoute ? '' : 'content-style'}`}>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/inicio" element={<Index />} />
+          <Route path="/ventas" element={<VentasList />} />
+          <Route path="/clientes" element={<ClientCatalog/>} />
+          <Route path="/empresas" element={<EmpresaList/>} />
+          <Route path="/promociones" element={<Promociones />} />
+          <Route path="/inicio" element={<Index />} />
+          <Route path="/ventas" element={<VentasList/>} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/contactoCliente" element={<ContactoCliente />} />
+          <Route path="*" element={<Pagina404 />} />
+        </Routes>
       </div>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <AppContent />
     </Router>
   );
 }

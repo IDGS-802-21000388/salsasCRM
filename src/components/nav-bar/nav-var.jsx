@@ -45,6 +45,14 @@ const NavBar = () => {
           <i className="fas fa-tags"></i>
           <span>Promociones</span>
         </Link>
+        <Link to="/dashboard" className="nav-button">
+          <i className="fas fa-tachometer-alt"></i>
+          <span>Dashboard</span>
+        </Link>
+        <Link to="/contactoCliente" className="nav-button">
+          <i className="fas fa-envelope"></i>
+          <span>Historial de Contacto</span>
+        </Link>
         <div id="nav-content-highlight"></div>
       </div>
       <div id="nav-footer">

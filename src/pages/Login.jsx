@@ -33,7 +33,7 @@ const Login = () => {
       console.log("Login exitoso:", response);
       localStorage.setItem("token", response.token);
       setTimeout(() => {
-        navigate("/home");
+        navigate("/inicio");
       }, 2200);
     } catch (error) {
       toast.error(

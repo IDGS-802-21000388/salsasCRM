@@ -1,72 +1,75 @@
 .index-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    background-color: #f9f9f9;
-    color: #333;
-    text-align: center;
-    animation: fadeIn 1s ease-in;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100%;
+  background-color: #f9f9f9;
+  color: #333;
+  text-align: center;
+  animation: fadeIn 1s ease-in;
+}
+
+.logo-wrapper {
+  margin-bottom: 20px;
+  animation: bounce 1.5s infinite;
+}
+
+.logo {
+  width: 350px;
+  height: 350px;
+}
+
+.welcome-text {
+  font-size: 2.5rem;
+  color: #980900;
+  margin: 10px 0;
+}
+
+.description-text {
+  font-size: 1.2rem;
+  color: #555;
+  max-width: 600px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
-  
-  .logo-wrapper {
-    margin-bottom: 20px;
-    animation: bounce 1.5s infinite;
+  to {
+    opacity: 1;
   }
-  
-  .logo {
-    width: 350px;
-    height: 350px;
+}
+
+@keyframes bounce {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0);
   }
-  
-  .welcome-text {
-    font-size: 2.5rem;
-    color: #980900;
-    margin: 10px 0;
+  40% {
+    transform: translateY(-20px);
   }
-  
-  .description-text {
-    font-size: 1.2rem;
-    color: #555;
-    max-width: 600px;
+  60% {
+    transform: translateY(-10px);
   }
-  
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-  
-  @keyframes bounce {
-    0%, 20%, 50%, 80%, 100% {
-      transform: translateY(0);
-    }
-    40% {
-      transform: translateY(-20px);
-    }
-    60% {
-      transform: translateY(-10px);
-    }
-  }
+}
 
 .index-content {
-    flex: 1;
-    padding: 20px;
-    background-color: #f0f0f0;
-    border-radius: 5px;
-  }
-  
-  .index-content h1 {
-    color: #980900;
-  }
-  
-  .index-content p {
-    font-size: 16px;
-    color: #333;
-  }
-  
-  
+  flex: 1;
+  padding: 20px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+}
+
+.index-content h1 {
+  color: #980900;
+}
+
+.index-content p {
+  font-size: 16px;
+  color: #333;
+}
