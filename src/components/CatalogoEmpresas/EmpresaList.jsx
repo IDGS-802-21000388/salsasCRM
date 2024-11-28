@@ -169,27 +169,27 @@ const EmpresaList = () => {
           </table>
         </CardBody>
         <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-          <Typography variant="small" color="blue-gray" className="font-normal">
-            Mostrando {currentEmpresas.length} de {filteredEmpresas.length} empresas
-          </Typography>
-          <div className="flex gap-2">
-            <Button variant="outlined" size="sm" onClick={handleOpenAddEmpresaModal}>
-              Añadir nueva empresa
-            </Button>
-            <Button
-              variant="outlined"
-              size="sm"
-              color="blue"
-              onClick={handleOpenAddEmpresaUsuarioModal}
-            >
-              Añadir empresa-usuario
-            </Button>
-          </div>
-        </CardFooter>
-      </Card>
+        <Typography variant="small" color="blue-gray" className="font-normal">
+          Mostrando {currentEmpresas.length} de {filteredEmpresas.length} empresas
+        </Typography>
+        <div className="flex gap-2">
+          <Button variant="outlined" size="sm" onClick={handleOpenAddEmpresaModal}>
+            Añadir nueva empresa
+          </Button>
+          <Button
+            variant="outlined"
+            size="sm"
+            color="blue"
+            onClick={handleOpenAddEmpresaUsuarioModal}
+          >
+            Añadir empresa-usuario
+          </Button>
+        </div>
+      </CardFooter>
 
-      {/* Paginación */}
+      {/* Mover los botones de paginación aquí */}
       <div className="flex justify-center mt-4">
+        <div className="m-4">
         <Button
           variant="outlined"
           size="sm"
@@ -198,15 +198,23 @@ const EmpresaList = () => {
         >
           Anterior
         </Button>
-        <Button
-          variant="outlined"
-          size="sm"
-          disabled={currentPage === Math.ceil(filteredEmpresas.length / itemsPerPage)}
-          onClick={() => paginate(currentPage + 1)}
-        >
-          Siguiente
-        </Button>
+        </div>
+        <div className="m-4">
+          <Button
+            variant="outlined"
+            size="sm"
+            disabled={currentPage === Math.ceil(filteredEmpresas.length / itemsPerPage)}
+            onClick={() => paginate(currentPage + 1)}
+          >
+            Siguiente
+          </Button>
+        </div>
+        
+        
       </div>
+      </Card>
+
+      
 
       <AddEmpresaModal
         open={openAddEmpresaModal}
