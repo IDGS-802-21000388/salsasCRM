@@ -53,6 +53,10 @@ const NavBar = () => {
           <i className="fas fa-envelope"></i>
           <span>Historial de Contacto</span>
         </Link>
+        <Link to="/quejas" className="nav-button">
+          <i className="fas fa-exclamation-triangle"></i>
+          <span>Quejas y Comentarios</span>
+        </Link>
         <div id="nav-content-highlight"></div>
       </div>
       <div id="nav-footer">

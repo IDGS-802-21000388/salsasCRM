@@ -1,0 +1,223 @@
+.quejas-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  width: 100%;
+  max-width: 1200px;
+  margin: auto;
+  background-color: #fff5f5;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  font-family: 'Roboto', sans-serif;
+}
+
+.header {
+  font-size: 2rem;
+  color: #fff;
+  background-color: #b22222;
+  text-align: center;
+  font-family: 'Times New Roman', Times, serif;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.quejas-section {
+  margin-top: 20px;
+}
+
+.btn-toggle-section {
+  margin-bottom: 10px;
+  color: #ffffff;
+  border: none;
+  padding: 8px 15px;
+  font-size: 1.5rem;
+background-color: #f10d0d88;
+  cursor: pointer;
+  border-radius: 5px;
+  width: 100%;
+}
+
+
+.queja-card {
+  padding: 20px;
+  border: 1px solid #e0a1a1;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 15px;
+}
+
+.expanded-section input,
+.expanded-section textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  font-size: 1rem;
+  margin-top: 10px;
+}
+
+.seguimientos h4{
+  background-color: #cf1414b8;
+  text-align: center;
+  color: white;
+}
+
+.seguimientos ul li {
+  font-family: 'Times New Roman', serif;
+  margin-bottom: 15px;
+  padding: 10px;
+  border: 1px solid #b22222;
+  border-radius: 5px;
+  background-color: #ffe6e6;
+}
+
+.btn {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.btn-responder {
+  background-color: #b22222;
+  color: white;
+}
+
+.btn-responder:hover {
+  background-color: #d32f2f;
+}
+
+.btn-expand {
+  background-color: #ff6347;
+  color: white;
+}
+
+.btn-expand:hover {
+  background-color: #ff8264;
+}
+
+.btn-finalizar {
+  background-color: #d32f2f;
+  color: white;
+}
+
+.btn-finalizar:hover {
+  background-color: #ff6347;
+}
+
+.toast-container {
+  z-index: 9999;
+}
+
+.loading,
+.error {
+  color: #d32f2f;
+  text-align: center;
+}
+
+.form-seguimiento {
+  border-top: 1px solid #ddd;
+  padding-top: 10px;
+  margin-top: 10px;
+  margin-bottom: 20px; /* Agregado para asegurar que el formulario tenga espacio */
+}
+
+.form-seguimiento input,
+.form-seguimiento textarea {
+  margin-top: 10px;
+  display: block;
+  margin-bottom: 10px; /* Asegura que haya espacio entre los inputs */
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.actions .btn {
+  flex: 1;
+}
+
+/* Contornos a los inputs */
+.form-seguimiento input,
+.form-seguimiento textarea {
+  border: 2px solid #e0a1a1; /* Contorno visible */
+  border-radius: 8px;
+  padding: 10px;
+}
+
+/* Botones no amontonados */
+.actions .btn {
+  flex: 1;
+  margin: 0 5px; /* Separar botones */
+}
+
+/* Ajuste de botón de "expandir" para evitar amontonar con el formulario */
+.queja-card .btn-expand {
+  margin-bottom: 10px; /* Separar de los demás elementos */
+}
+
+.queja-info{
+  font-size: 1rem;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  
+  
+}
+
+.queja-info h1{
+  font-size: 1.3rem;
+  text-align: center;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  background-color: #5cf39b;
+} 
+
+.queja-info p {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #333;
+  margin: 10px 0;
+}
+
+.queja-info h3{
+  color: rgb(86, 6, 160);
+}
+
+.queja-card {
+  padding: 20px;
+  border: 1px solid #e0a1a1;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 15px;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.queja-card:hover {
+  cursor: pointer;
+  transform: scale(1.05); /* Efecto de escala al pasar el cursor */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Efecto de sombra al pasar el cursor */
+}
+
+.form-seguimiento input,
+.form-seguimiento textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  font-size: 1rem;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  background-color: #f9f9f9;
+}
+
+.form-seguimiento input:focus,
+.form-seguimiento textarea:focus {
+  border-color: #b22222; /* Resaltar el borde cuando esté en foco */
+  outline: none;
+}
+

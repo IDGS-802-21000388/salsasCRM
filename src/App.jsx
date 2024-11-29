@@ -12,6 +12,7 @@ import Promociones from './pages/Promociones';
 import Pagina404 from './components/Pagina404/pagina404';
 import Dashboard from './pages/Dashboard';
 import ContactoCliente from './pages/ContactoCliente';
+import QuejasScreen from './components/Quejas/QuejasScreen';
 
 function AppContent() {
   const [menuOpen, setMenuOpen] = useState(true);
@@ -36,6 +37,7 @@ function AppContent() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/contactoCliente" element={<ContactoCliente />} />
           <Route path="*" element={<Pagina404 />} />
+          <Route path="/quejas" element={<QuejasScreen/>} />
         </Routes>
       </div>
     </div>

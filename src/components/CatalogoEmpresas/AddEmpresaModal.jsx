@@ -10,8 +10,9 @@ import {
   DialogFooter,
   Textarea,
 } from "@material-tailwind/react";
-import { useState } from "react";
 import { createEmpresa } from "../../services/EmpresaService";
+import { useState, useEffect } from 'react';
+
 
 export const AddEmpresaModal = ({ open, onClose, onSuccess}) => {
   const [empresa, setEmpresa] = useState({
