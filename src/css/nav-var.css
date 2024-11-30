@@ -386,3 +386,20 @@
   justify-content: start;
 }
 
+.nav-logout-button {
+  margin: 16px 0; /* Separación del footer */
+  padding: 10px 16px;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.nav-logout-button:hover {
+  color: #fff;
+}

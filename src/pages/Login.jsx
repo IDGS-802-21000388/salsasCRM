@@ -19,7 +19,27 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await login(correo, contrasenia);
-      toast.success("Inicio de sesión exitosa.", {
+
+      // Extraer y estructurar los datos relevantes del usuario
+      const userData = {
+        idUsuario: response.user.idUsuario,
+        nombre: response.user.nombre,
+        nombreUsuario: response.user.nombreUsuario,
+        correo: response.user.correo,
+        rol: response.user.rol,
+        telefono: response.user.telefono,
+        estatus: response.user.estatus,
+        idDireccion: response.user.idDireccion,
+        dateLastToken: response.user.dateLastToken,
+      };
+
+      // Convertir los datos a un string para almacenarlo en localStorage
+      const token = JSON.stringify(userData);
+
+      // Guardar el token en localStorage
+      localStorage.setItem("token", token);
+
+      toast.success("Inicio de sesión exitoso.", {
         position: "bottom-center",
         autoClose: 1500,
         hideProgressBar: false,
@@ -30,8 +50,10 @@ const Login = () => {
         theme: "light",
         transition: Bounce,
       });
-      console.log("Login exitoso:", response);
-      localStorage.setItem("token", response.token);
+
+      console.log("Datos del usuario almacenados:", userData);
+
+      // Navegar al inicio después de un breve tiempo
       setTimeout(() => {
         navigate("/inicio");
       }, 2200);

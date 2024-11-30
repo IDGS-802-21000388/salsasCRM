@@ -7,12 +7,12 @@ import VentasList from './components/VentasList/VentasList';
 import ClientCatalog from './components/CatalogoClientes/ClientCatalog';
 import EmpresaList from './components/CatalogoEmpresas/EmpresaList';
 import Login from './pages/Login';
-//import Home from './pages/Home';
 import Promociones from './pages/Promociones';
 import Pagina404 from './components/Pagina404/pagina404';
 import Dashboard from './pages/Dashboard';
 import ContactoCliente from './pages/ContactoCliente';
 import QuejasScreen from './components/Quejas/QuejasScreen';
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute'; // Importa el componente de rutas protegidas
 
 function AppContent() {
   const [menuOpen, setMenuOpen] = useState(true);
@@ -26,18 +26,77 @@ function AppContent() {
       
       <div className={`content ${isLoginRoute ? '' : 'content-style'}`}>
         <Routes>
+          {/* Ruta pública */}
           <Route path="/" element={<Login />} />
-          <Route path="/inicio" element={<Index />} />
-          <Route path="/ventas" element={<VentasList />} />
-          <Route path="/clientes" element={<ClientCatalog/>} />
-          <Route path="/empresas" element={<EmpresaList/>} />
-          <Route path="/promociones" element={<Promociones />} />
-          <Route path="/inicio" element={<Index />} />
-          <Route path="/ventas" element={<VentasList/>} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/contactoCliente" element={<ContactoCliente />} />
+
+          {/* Rutas protegidas */}
+          <Route 
+            path="/inicio" 
+            element={
+              <ProtectedRoute>
+                <Index />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/ventas" 
+            element={
+              <ProtectedRoute>
+                <VentasList />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/clientes" 
+            element={
+              <ProtectedRoute>
+                <ClientCatalog />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/empresas" 
+            element={
+              <ProtectedRoute>
+                <EmpresaList />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/promociones" 
+            element={
+              <ProtectedRoute>
+                <Promociones />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/dashboard" 
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/contactoCliente" 
+            element={
+              <ProtectedRoute>
+                <ContactoCliente />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/quejas" 
+            element={
+              <ProtectedRoute>
+                <QuejasScreen />
+              </ProtectedRoute>
+            } 
+          />
+
+          {/* Ruta de error 404 */}
           <Route path="*" element={<Pagina404 />} />
-          <Route path="/quejas" element={<QuejasScreen/>} />
         </Routes>
       </div>
     </div>

@@ -221,7 +221,7 @@ const Promociones = () => {
   const currentUsuarios = usuarios.slice(indexOfFirstUser, indexOfLastUser);
 
   return (
-    <div className="p-6 min-h-screen">
+    <div style={{ width: '100%', height: '100%' }}>
       <Typography
         variant="h2"
         className="text-center text-[#217765] font-bold mb-6"
