@@ -161,8 +161,9 @@ const Dashboard = () => {
           <div className="w-1/2">
             <CircularProgressbar
               value={porcentajeAbiertas}
-              text={`${Math.round(porcentajeAbiertas)}%`}
+              text={`${Math.round(porcentajeAbiertas)}%\n(${cotizacionesAbiertas.length})`}
               styles={buildStyles({
+                textSize: '12px',
                 textColor: '#217765',
                 pathColor: '#217765',
                 trailColor: '#d6d6d6',
@@ -175,8 +176,9 @@ const Dashboard = () => {
           <div className="w-1/2">
             <CircularProgressbar
               value={porcentajeCerradas}
-              text={`${Math.round(porcentajeCerradas)}%`}
+              text={`${Math.round(porcentajeCerradas)}%\n(${cotizacionesCerradas.length})`}
               styles={buildStyles({
+                textSize: '12px',
                 textColor: '#e3342f',
                 pathColor: '#e3342f',
                 trailColor: '#d6d6d6',
